@@ -2,7 +2,7 @@ import fs from "fs-extra";
 import os from "os";
 import path from "path";
 
-const CONFIG_DIR = path.join(os.homedir(), ".diffly");
+const CONFIG_DIR = path.join(os.homedir(), ".findiff");
 const CONFIG_FILE = path.join(CONFIG_DIR, "config.json");
 
 export async function saveConfig(data) {

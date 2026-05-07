@@ -49,7 +49,7 @@ const config = await loadConfig();
 
 if (!config) {
     console.log(chalk.red("No configuration found."));
-    console.log(chalk.yellow("Run: smartcommit config"));
+    console.log(chalk.yellow("Run: findiff config"));
     process.exit(1);
 }
 

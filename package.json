@@ -1,17 +1,14 @@
 {
   "name": "findiff",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "AI-powered git commit generator",
   "type": "module",
-
   "bin": {
     "findiff": "./index.js"
   },
-
   "scripts": {
     "start": "node index.js"
   },
-
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "chalk": "^5.3.0",

@@ -61,6 +61,7 @@ if (command === "config") {
                 choices: [
                     "nvidia",
                     "gemini",
+                    "openrouter",
                     "openai",
                 ],
             },
@@ -76,6 +77,8 @@ if (command === "config") {
         nvidia: "meta/llama-3.1-8b-instruct",
 
         gemini: "gemini-2.5-flash",
+
+        openrouter: "deepseek/deepseek-chat-v3-0324:free",
 
         openai: "gpt-4.1-mini",
     };

@@ -22,32 +22,27 @@ if (command === "config") {
         await loadConfig();
 
     if (existingConfig) {
+        console.log("");
+
         console.log(
-            chalk.yellow(
-                "Existing configuration found.\n"
+            chalk.cyan(
+                "Current Configuration:"
             )
         );
 
-        const answer =
-            await inquirer.prompt([
-                {
-                    type: "confirm",
-                    name: "changeConfig",
-                    message:
-                        "Do you want to replace the current configuration?",
-                    default: false,
-                },
-            ]);
+        console.log(
+            chalk.yellow(
+                `Provider: ${existingConfig.provider}`
+            )
+        );
 
-        if (!answer.changeConfig) {
-            console.log(
-                chalk.cyan(
-                    "Keeping existing configuration."
-                )
-            );
+        console.log(
+            chalk.yellow(
+                `Model: ${existingConfig.model}`
+            )
+        );
 
-            process.exit(0);
-        }
+        console.log("");
     }
 
     const answers =
@@ -64,35 +59,70 @@ if (command === "config") {
                     "openrouter",
                     "openai",
                 ],
+
+                default:
+                    existingConfig?.provider,
             },
 
             {
                 type: "input",
                 name: "apiKey",
                 message: "Enter API key",
+
+                default:
+                    existingConfig?.apiKey,
+                validate: (input) => {
+                    if (!input.trim()) {
+                        return "API key is required";
+                    }
+
+                    return true;
+                },
             },
-
         ]);
+
     const DEFAULT_MODELS = {
-        nvidia: "meta/llama-3.1-8b-instruct",
+        nvidia:
+            "meta/llama-3.1-8b-instruct",
 
-        gemini: "gemini-2.5-flash",
+        gemini:
+            "gemini-2.5-flash",
 
-        openrouter: "deepseek/deepseek-chat-v3-0324:free",
+        openai:
+            "gpt-4.1-mini",
 
-        openai: "gpt-4.1-mini",
+        openrouter:
+            "deepseek/deepseek-chat-v3-0324:free",
     };
 
     answers.model =
-        DEFAULT_MODELS[answers.provider];
+        DEFAULT_MODELS[
+        answers.provider
+        ];
 
     await saveConfig(answers);
 
+    console.log("");
+
     console.log(
         chalk.green(
-            "\nConfiguration saved successfully."
+            "Configuration updated successfully."
         )
     );
+
+    console.log(
+        chalk.cyan(
+            `Provider: ${answers.provider}`
+        )
+    );
+
+    console.log(
+        chalk.cyan(
+            `Model: ${answers.model}`
+        )
+    );
+
+    console.log("");
 
     process.exit(0);
 }

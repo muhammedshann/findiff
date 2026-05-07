@@ -1,5 +1,5 @@
 export function buildPrompt(diff) {
-  return `
+    return `
 You are an expert software engineer.
 
 Generate a high-quality professional git commit message.

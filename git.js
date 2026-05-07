@@ -3,92 +3,92 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 
 const IGNORED_FOLDERS = [
-  "node_modules",
-  "dist",
-  "build",
-  ".next",
-  ".cache",
-  "coverage",
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    ".cache",
+    "coverage",
 ];
 
 export async function getGitDiff() {
-  try {
-    const stagedFiles = execSync(
-      "git diff --cached --name-only",
-      {
-        encoding: "utf-8",
-      }
-    )
-      .split("\n")
-      .filter(Boolean);
-
-    const detectedFolders = [];
-
-    for (const folder of IGNORED_FOLDERS) {
-      const exists = stagedFiles.some((file) =>
-        file.startsWith(folder + "/")
-      );
-
-      if (exists) {
-        detectedFolders.push(folder);
-      }
-    }
-
-    let excludeFolders = [];
-
-    if (detectedFolders.length > 0) {
-      console.log("");
-
-      console.log(
-        chalk.yellow(
-          "Large or unnecessary folders detected:"
+    try {
+        const stagedFiles = execSync(
+            "git diff --cached --name-only",
+            {
+                encoding: "utf-8",
+            }
         )
-      );
+            .split("\n")
+            .filter(Boolean);
 
-      detectedFolders.forEach((folder) => {
-        console.log(chalk.cyan(`- ${folder}`));
-      });
+        const detectedFolders = [];
 
-      console.log("");
+        for (const folder of IGNORED_FOLDERS) {
+            const exists = stagedFiles.some((file) =>
+                file.startsWith(folder + "/")
+            );
 
-      const answer = await inquirer.prompt([
-        {
-          type: "confirm",
-          name: "include",
-          message:
-            "Include these folders in AI analysis? (may slow down processing)",
-          default: false,
-        },
-      ]);
+            if (exists) {
+                detectedFolders.push(folder);
+            }
+        }
 
-      if (!answer.include) {
-        excludeFolders = detectedFolders;
-      }
+        let excludeFolders = [];
+
+        if (detectedFolders.length > 0) {
+            console.log("");
+
+            console.log(
+                chalk.yellow(
+                    "Large or unnecessary folders detected:"
+                )
+            );
+
+            detectedFolders.forEach((folder) => {
+                console.log(chalk.cyan(`- ${folder}`));
+            });
+
+            console.log("");
+
+            const answer = await inquirer.prompt([
+                {
+                    type: "confirm",
+                    name: "include",
+                    message:
+                        "Include these folders in AI analysis? (may slow down processing)",
+                    default: false,
+                },
+            ]);
+
+            if (!answer.include) {
+                excludeFolders = detectedFolders;
+            }
+        }
+
+        const excludeArgs = excludeFolders
+            .map(
+                (folder) => `':(exclude)${folder}'`
+            )
+            .join(" ");
+
+        const command = excludeArgs
+            ? `git diff --cached -- . ${excludeArgs}`
+            : "git diff --cached";
+
+        const diff = execSync(command, {
+            encoding: "utf-8",
+            maxBuffer: 1024 * 1024 * 50,
+        });
+
+        return diff;
+    } catch (error) {
+        console.error(
+            chalk.red("Failed to read git diff")
+        );
+
+        console.error(error.message);
+
+        process.exit(1);
     }
-
-    const excludeArgs = excludeFolders
-      .map(
-        (folder) => `':(exclude)${folder}'`
-      )
-      .join(" ");
-
-    const command = excludeArgs
-      ? `git diff --cached -- . ${excludeArgs}`
-      : "git diff --cached";
-
-    const diff = execSync(command, {
-      encoding: "utf-8",
-      maxBuffer: 1024 * 1024 * 50,
-    });
-
-    return diff;
-  } catch (error) {
-    console.error(
-      chalk.red("Failed to read git diff")
-    );
-
-    console.error(error.message);
-
-    process.exit(1);
-  }
 }

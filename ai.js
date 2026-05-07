@@ -7,7 +7,7 @@ export async function generateCommitMessage(diff, apiKey) {
     });
 
     const completion = await client.chat.completions.create({
-        model: "meta/llama-3.1-70b-instruct",
+        model: "meta/llama-3.1-8b-instruct",
 
         messages: [
             {

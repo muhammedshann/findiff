@@ -53,7 +53,7 @@ if (!config) {
     process.exit(1);
 }
 
-const diff = getGitDiff();
+const diff = await getGitDiff();
 
 if (!diff.trim()) {
     console.log(chalk.yellow("No staged changes found."));
